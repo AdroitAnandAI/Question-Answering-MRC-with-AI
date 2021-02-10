@@ -1,30 +1,38 @@
-## cs224n-Squad-Project
+# Machine Reading Comprehension with BIDAF 
 
-This repository has the code to run the model my team built for the SQUaD dataset
+## Enabling Question Answering Capability for Chatbots
 
-### Running the code
 
-* Please run ```./get_started.sh``` to download the SQuAD dataset and GloVE Vectors
-* requirements.txt is used by get_started.sh to install requirements. Once the script is done running, you will have a new directory data with the train and dev json files for SQuAD datset. And another empty folder experiments that will eventually have the results from your experiments. 
+<p align="center">
+    <img src="https://github.com/AdroitAnandAI/Question-Answering-MRC-with-AI/blob/main/mcBot.gif">
+</p>
 
-* To run code please run main.py in code. The settings to run BIDAF model are:
+This is an easy-to-use repository extended from [here](https://github.com/priya-dwivedi/cs224n-Squad-Project)
+
+1) The Reading Comprehension capability of the model is chanelled as a chatbot module
+2) All the dependancies are solved & the image is pushed in Docker Hub. You can download the image and easily run the code in this repo.
+3) Some modifications and bug fixes in the handling of input and output is also done.
+
+
+### How to use?
+
+
+* Run ```./get_started.sh```  to download SQuAD dataset and GloVE Vectors: glove.6B.100d.txt
+
+* Download from the model checkpoint files from [here](https://drive.google.com/file/d/1E_vMoBNA77a2vVbCKB3K-n5TY80aJtAv/view?usp=sharing) and extract to this folder: experiments/bidaf_best/best_checkpoint. 
+
+
+* Pull the docker from Docker Hub using the command below.
 ```
-python code/main.py --experiment_name=bidaf_best --dropout=0.15 --batch_size=60 --hidden_size_encoder=150 --embedding_size=100 --do_char_embed=False --add_highway_layer=True --rnet_attention=False --bidaf_attention=True --answer_pointer_RNET=False --smart_span=True --hidden_size_modeling=150 --mode=train
+sudo docker pull 06021981/mrc-factoid:latest
+```
+* Change directory to the root github directory and execute the command below to trigger bot.
+```
+sudo docker run -it -v $PWD:/tmp -w /tmp 06021981/mrc-factoid:latest python code/mcBot.py --experiment_name=bidaf_best --dropout=0.15 --batch_size=60 --hidden_size_encoder=150 --embedding_size=100 --do_char_embed=False --add_highway_layer=True --rnet_attention=False --bidaf_attention=True --answer_pointer_RNET=False --smart_span=True --hidden_size_modeling=150 --mode=official_eval --json_in_path=data/qns.json --ckpt_load_dir=experiments/bidaf_best/best_checkpoint
 ```
 
-* The settings to run the RNET model are:
 
-```
-python code/main.py --experiment_name=rnet_best --dropout=0.20 --batch_size=20 --hidden_size_encoder=200 --embedding_size=300 --do_char_embed=False --add_highway_layer=False --rnet_attention=True --bidaf_attention=False --answer_pointer_RNET=True --smart_span=True--mode=official_eval \
---json_in_path=data/tiny-dev.json \
---json_out_path=predictions_rnet.json \
---ckpt_load_dir=experiments/rnet_best/best_checkpoint
-```
 
-* Once you run the models, you will have a new folder by the name experiments which will have the results from your code runs
+## References
 
-* To start tensorboard, please run the following commands:
-```
-cd experiments # Go to experiments directory
-tensorboard --logdir=. --port=5678 # Start TensorBoard
-```
+https://github.com/priya-dwivedi/cs224n-Squad-Project
